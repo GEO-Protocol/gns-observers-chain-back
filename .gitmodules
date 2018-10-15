@@ -1,0 +1,3 @@
+[submodule "core/libs/lamport"]
+	path = core/libs/lamport
+	url = git@github.com:GEO-Protocol/lib-crypto-lamport.git
