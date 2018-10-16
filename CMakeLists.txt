@@ -38,7 +38,7 @@ ENDIF (${PLATFORM} MATCHES "LINUX")
 # Debug options
 # (available options are: DEBUG | RELEASE | TESTS)
 #
-set(BUILD_CONFIGURATION "RELEASE")
+set(BUILD_CONFIGURATION "DEBUG")
 
 IF (${BUILD_CONFIGURATION} MATCHES "DEBUG")
     set(CMAKE_BUILD_TYPE "Debug")
@@ -71,6 +71,7 @@ ENDIF (${BUILD_CONFIGURATION} MATCHES "TESTS")
 # Source files
 #
 add_subdirectory(core/exceptions/common)
+add_subdirectory(core/logger)
 
 
 
@@ -91,7 +92,11 @@ set(SOURCE_FILES
 
 add_executable(gns_observers_chain_back ${SOURCE_FILES})
 target_link_libraries(gns_observers_chain_back
+        ${Boost_SYSTEM_LIBRARY}
+
         -lsodium
+        -lboost_date_time
 
         exceptions
+        logger
         lamport)
