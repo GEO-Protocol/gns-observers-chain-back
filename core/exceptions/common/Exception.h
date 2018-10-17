@@ -7,8 +7,8 @@
  * except according to the terms contained in the LICENSE.md file.
  */
 
-#ifndef GEO_NETWORK_CLIENT_EXCEPTIONS_H
-#define GEO_NETWORK_CLIENT_EXCEPTIONS_H
+#ifndef GNS_OBSERVERS_CHAIN_BACK_EXCEPTIONS_H
+#define GNS_OBSERVERS_CHAIN_BACK_EXCEPTIONS_H
 
 #include <string>
 
@@ -34,4 +34,4 @@ private:
 };
 
 
-#endif //GEO_NETWORK_CLIENT_EXCEPTIONS_H
+#endif //GNS_OBSERVERS_CHAIN_BACK_EXCEPTIONS_H

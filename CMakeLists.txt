@@ -72,6 +72,7 @@ ENDIF (${BUILD_CONFIGURATION} MATCHES "TESTS")
 #
 add_subdirectory(core/exceptions/common)
 add_subdirectory(core/logger)
+add_subdirectory(core/interface/commands)
 
 
 

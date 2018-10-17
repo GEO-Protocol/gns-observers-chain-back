@@ -7,8 +7,8 @@
  * except according to the terms contained in the LICENSE.md file.
  */
 
-#ifndef GEO_NETWORK_CLIENT_LOGGER_H
-#define GEO_NETWORK_CLIENT_LOGGER_H
+#ifndef GNS_OBSERVERS_CHAIN_BACK_LOGGER_H
+#define GNS_OBSERVERS_CHAIN_BACK_LOGGER_H
 
 #include <iostream>
 #include <fstream>
@@ -115,4 +115,4 @@ private:
     uint32_t mOperationsLogFileLinesNumber;
     string mOperationLogFileName;
 };
-#endif //GEO_NETWORK_CLIENT_LOGGER_H
+#endif //GNS_OBSERVERS_CHAIN_BACK_LOGGER_H

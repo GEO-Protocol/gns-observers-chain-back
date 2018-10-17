@@ -7,8 +7,8 @@
  * except according to the terms contained in the LICENSE.md file.
  */
 
-#ifndef GEO_NETWORK_CLIENT_FILELOGGER_H
-#define GEO_NETWORK_CLIENT_FILELOGGER_H
+#ifndef GNS_OBSERVERS_CHAIN_BACK_FILELOGGER_H
+#define GNS_OBSERVERS_CHAIN_BACK_FILELOGGER_H
 
 #include <cstdio>
 #include <string>
@@ -79,4 +79,4 @@ private:
 
 };
 
-#endif //GEO_NETWORK_CLIENT_FILELOGGER_H
+#endif //GNS_OBSERVERS_CHAIN_BACK_FILELOGGER_H

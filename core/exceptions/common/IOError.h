@@ -7,8 +7,8 @@
  * except according to the terms contained in the LICENSE.md file.
  */
 
-#ifndef GEO_NETWORK_CLIENT_IOERROR_H
-#define GEO_NETWORK_CLIENT_IOERROR_H
+#ifndef GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
+#define GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
 
 #include "Exception.h"
 
@@ -18,4 +18,4 @@ class IOError: public Exception {
 };
 
 
-#endif //GEO_NETWORK_CLIENT_IOERROR_H
+#endif //GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
