@@ -3,7 +3,7 @@ project(gns_observers_chain_back)
 
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread")
 set(CMAKE_CXX_STANDARD 14)
 
 
@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 14)
 #
 # Boost configuration
 #
-find_package(Boost COMPONENTS system filesystem date_time REQUIRED)
+find_package(Boost COMPONENTS system filesystem date_time thread REQUIRED)
 
 set(Boost_USE_SHARED_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
@@ -70,9 +70,10 @@ ENDIF (${BUILD_CONFIGURATION} MATCHES "TESTS")
 #
 # Source files
 #
+add_subdirectory(core/common)
 add_subdirectory(core/exceptions/common)
 add_subdirectory(core/logger)
-add_subdirectory(core/interface/commands)
+add_subdirectory(core/interface)
 
 
 
@@ -97,7 +98,11 @@ target_link_libraries(gns_observers_chain_back
 
         -lsodium
         -lboost_date_time
+        -lboost_filesystem
 
+        common
         exceptions
         logger
-        lamport)
+        lamport
+        interface
+        )

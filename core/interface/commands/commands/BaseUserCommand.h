@@ -1,23 +1,19 @@
-﻿#ifndef GNS_OBSERVERS_CHAIN_BACK_COMMAND_H
-#define GNS_OBSERVERS_CHAIN_BACK_COMMAND_H
-
-#include "../../../common/Types.h"
-#include "../../../common/time/TimeUtils.h"
-#include "../../../common/memory/MemoryUtils.h"
-
-#include "../../results_interface/result/CommandResult.h"
-
-#include <boost/uuid/uuid.hpp>
+﻿#ifndef GNS_OBSERVERS_CHAIN_BACK_BASEUSERCOMMAND_H
+#define GNS_OBSERVERS_CHAIN_BACK_BASEUSERCOMMAND_H
 
 
-namespace uuids = boost::uuids;
+#include "../../results/results/CommandResult.h"
+
+
+class CommandResult;
+
 
 class BaseUserCommand {
 public:
-    typedef shared_ptr<BaseUserCommand> Shared;
+    using Shared = shared_ptr<BaseUserCommand>;
 
 public:
-    BaseUserCommand(
+    explicit BaseUserCommand(
         const string& identifier);
 
     BaseUserCommand(
@@ -30,41 +26,22 @@ public:
 
     const string &identifier() const;
 
-    // TODO: remove noexcept
-    // TODO: split methods into classes
-    CommandResult::SharedConst responseOK() const
-        noexcept;
-    CommandResult::SharedConst responseCreated() const
-        noexcept;
-    CommandResult::SharedConst responsePostponedByReservations() const
-        noexcept;
-    CommandResult::SharedConst responseProtocolError() const
-        noexcept;
-    CommandResult::SharedConst responseTrustLineIsAbsent() const
-        noexcept;
-    CommandResult::SharedConst responseCurrentIncomingDebtIsGreaterThanNewAmount() const
-        noexcept;
-    CommandResult::SharedConst responseTrustLineIsAlreadyPresent() const
-        noexcept;
+    /*
+     * All commands results codes must be listed here.
+     * The order is from common usage codes to the command-specific codes.
+     */
 
-    CommandResult::SharedConst responseTrustLineRejected() const;
+    CommandResult::SharedConst responseOK() const;
 
-    CommandResult::SharedConst responseInsufficientFunds() const
-        noexcept;
-    CommandResult::SharedConst responseConflictWithOtherOperation() const
-        noexcept;
-    CommandResult::SharedConst responseRemoteNodeIsInaccessible() const
-        noexcept;
-    CommandResult::SharedConst responseNoRoutes() const
-        noexcept;
-    CommandResult::SharedConst responseUnexpectedError() const
-        noexcept;
-    // this response used during disabling start payment and trust line transactions
-    CommandResult::SharedConst responseForbiddenRunTransaction() const
-        noexcept;
+    CommandResult::SharedConst responseCreated() const;
 
-    CommandResult::SharedConst responseEquivalentIsAbsent() const
-        noexcept;
+    /*
+     * ...
+     *
+     * Other commands results must go here.
+     *
+     * ...
+     */
 
 protected:
     CommandResult::SharedConst makeResult(
@@ -74,4 +51,4 @@ private:
     const CommandUUID mCommandUUID;
     const string mCommandIdentifier;
 };
-#endif //GNS_OBSERVERS_CHAIN_BACK_COMMAND_H
+#endif //GNS_OBSERVERS_CHAIN_BACK_BASEUSERCOMMAND_H

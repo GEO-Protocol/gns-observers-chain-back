@@ -12,66 +12,115 @@
 
 int Core::run()
 {
-    auto initCode = initSubsystems();
-    if (initCode != 0) {
-        error() << "Can't initialize internal subsystems. "
-                   "Process will now be stopped.";
+    try {
+        auto initCode = initSubsystems();
+        if (initCode != 0) {
+            error() << "Can't initialize internal subsystems. "
+                       "Process will now be stopped.";
 
-        return initCode;
+            return initCode;
+        }
+
+        info() << "Processing started.";
+
+        mCommandsInterface->beginCommandsAccepting();
+        mIOService.run();
+        return 0;
+
+    } catch (Exception &e) {
+        error() << e.what();
+        return ErrorCodes::UnhandledException;
     }
-
-    return 0;
-    // todo: commands interface reading should go here
 }
 
 int Core::initSubsystems()
 {
+    // note: there is no need to catch any exceptions here.
+    // all exceptions would be catch on a run() level.
+
     int initCode = initLogger();
     if (initCode != 0) {
         return initCode;
     }
 
-    return 0;
+    initCode = initCommandsInterface();
+    if (initCode != 0) {
+        return initCode;
+    }
+
+    return initCode;
 }
 
 int Core::initLogger()
 {
-    try {
-        mLog = make_unique<Logger>();
-        return 0;
+    mLog = make_unique<Logger>();
+    return 0;
+}
 
-    } catch (exception &e) {
-        cerr << boost::posix_time::microsec_clock::universal_time() << ": FATAL\tCORE\tLogger cannot be initialized." << endl;
-        return -1;
-    }
+int Core::initCommandsInterface()
+{
+    mCommandsInterface = make_unique<CommandsInterface>(
+        mIOService,
+        *mLog);
+
+    info() << "Commands interface is successfully initialised";
+    return 0;
 }
 
 string Core::logHeader()
-noexcept
+    noexcept
 {
     return "[CORE]";
 }
 
-LoggerStream Core::error() const
-noexcept
+LoggerStream Core::error()
+    const
+    noexcept
 {
-    return mLog->error(logHeader());
+    return constructLoggerStream("ERROR");
 }
 
-LoggerStream Core::warning() const
-noexcept
+LoggerStream Core::warning()
+    const
+    noexcept
 {
-    return mLog->warning(logHeader());
+    return constructLoggerStream("WARNING");
 }
 
-LoggerStream Core::info() const
-noexcept
+LoggerStream Core::info()
+    const
+    noexcept
 {
-    return mLog->info(logHeader());
+    return constructLoggerStream("INFO");
 }
 
-LoggerStream Core::debug() const
-noexcept
+LoggerStream Core::debug()
+    const
+    noexcept
 {
-    return mLog->debug(logHeader());
+    return constructLoggerStream("DEBUG");
+}
+
+LoggerStream Core::constructLoggerStream(
+    const string &group)
+    const
+    noexcept
+{
+    // In case if logger was not initialised - error must be reported to standard errors stream.
+    if (mLog == nullptr)
+        return LoggerStream::defaultErrorsStream(group, logHeader());
+
+    if (group == "ERROR")
+        return mLog->error(logHeader());
+
+    if (group == "WARNING")
+        return mLog->warning(logHeader());
+
+    if (group == "INFO")
+        return mLog->info(logHeader());
+
+    if (group == "DEBUG")
+        return mLog->debug(logHeader());
+
+    return LoggerStream::dummy();
 }

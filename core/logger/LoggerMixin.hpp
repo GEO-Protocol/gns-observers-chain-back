@@ -24,7 +24,7 @@ public:
         noexcept:
         mLog(logger){}
 
-    virtual const string logHeader() const = 0;
+    virtual const string& logHeader() const noexcept = 0;
 
     LoggerStream info() const
         noexcept {
