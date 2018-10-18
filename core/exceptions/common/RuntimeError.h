@@ -7,15 +7,17 @@
  * except according to the terms contained in the LICENSE.md file.
  */
 
-#ifndef GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
-#define GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
+#ifndef GNS_OBSERVERS_CHAIN_BACK_RUNTIMEERROR_H
+#define GNS_OBSERVERS_CHAIN_BACK_RUNTIMEERROR_H
 
 #include "Exception.h"
 
 
-class IOError: public Exception {
+class RuntimeError:
+    public Exception {
+
+public:
     using Exception::Exception;
 };
 
-
-#endif //GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
+#endif //GNS_OBSERVERS_CHAIN_BACK_RUNTIMEERROR_H

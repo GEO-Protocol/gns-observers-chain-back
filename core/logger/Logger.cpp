@@ -1,11 +1,21 @@
-﻿#include "Logger.h"
+﻿/**
+ * This file is part of GEO Protocol.
+ * It is subject to the license terms in the LICENSE.md file found in the top-level directory
+ * of this distribution and at https://github.com/GEO-Protocol/GEO-network-client/blob/master/LICENSE.md
+ *
+ * No part of GEO Protocol, including this file, may be copied, modified, propagated, or distributed
+ * except according to the terms contained in the LICENSE.md file.
+ */
+
+#include "Logger.h"
 
 
 LoggerStream::LoggerStream(
     Logger *logger,
     const string &group,
     const string &subsystem,
-    const StreamType type) :
+    const StreamType type)
+    noexcept :
 
     mLogger(logger),
     mGroup(group),
@@ -13,33 +23,9 @@ LoggerStream::LoggerStream(
     mType(type)
 {}
 
-/**
- * Outputs collected log information.
- */
-LoggerStream::~LoggerStream()
-{
-    if (mType == Dummy) {
-        // No output must be generated.
-        return;
-    }
-
-    auto message = this->str();
-    mLogger->logRecord(
-        mGroup,
-        mSubsystem,
-        message);
-}
-
-/**
- * Returns logger stream, that would collect information, but would never outputs it.
- */
-LoggerStream LoggerStream::dummy()
-{
-    return LoggerStream(nullptr, "", "", Dummy);
-}
-
 LoggerStream::LoggerStream(
-    const LoggerStream &other) :
+    const LoggerStream &other)
+    noexcept :
 
     mLogger(other.mLogger),
     mGroup(other.mGroup),
@@ -47,27 +33,83 @@ LoggerStream::LoggerStream(
     mType(other.mType)
 {}
 
-
-Logger::Logger():
-    mOperationLogFileName("operations.log"),
-    mOperationsLogFileLinesNumber(0)
+LoggerStream::~LoggerStream()
 {
+    // Standard logger type is expected to be most usable,
+    // so it should be placed first to prevent redundant comparisons.
+    if (mType == Standard) {
+        auto message = this->str();
+        mLogger->logRecord(
+            mGroup,
+            mSubsystem,
+            message);
+        return;
 
-    calculateOperationsLogFileLinesNumber();
+    } else if (mType == ErrorsStream) {
+        cerr << currentUTC() << ":\t"
+             << mGroup << "\t"
+             << mSubsystem << "\t"
+             << this->str()
+             << endl;
+        return;
 
-#ifdef DEBUG
-    // It is mush more useful to truncate log file on each application start, in debug mode.
-    mOperationsLogFile.open("operations.log", std::fstream::out | std::fstream::trunc);
-#endif
 
-#ifndef DEBUG
-    // In production mode, logs must be appended.
-    mOperationsLogFile.open("operations.log", std::fstream::out | std::fstream::app);
-#endif
+    /*
+     * Other log types hould go here.
+     */
 
+
+    } else if (mType == Dummy) {
+        // No output must be generated.
+        return;
+
+    } else {
+        // Unexpected logger type.
+        // Report it along with the original error.
+        // Default system errors strem is sed here because other loggers might be not initialised.
+        LoggerStream::defaultErrorsStream(mGroup, mSubsystem)
+            << "Unexpected log type occurred: "
+            << mType;
+
+        LoggerStream::defaultErrorsStream(mGroup, mSubsystem)
+            << this->str();
+    }
+}
+
+LoggerStream LoggerStream::dummy()
+{
+    return LoggerStream(nullptr, "", "", Dummy);
+}
+
+LoggerStream LoggerStream::defaultErrorsStream(
+    const string &group,
+    const string &subsystem)
+{
+    return LoggerStream(nullptr, group, subsystem, ErrorsStream);
+}
+
+const boost::posix_time::ptime LoggerStream::currentUTC() noexcept
+{
+    return boost::posix_time::microsec_clock::universal_time();
 }
 
 
+Logger::Logger():
+    mOperationsLogFileLinesNumber(0)
+{
+    calculateCurrentLogFileLinesCount();
+
+#ifdef DEBUG
+    // It is mush more useful to truncate log file on each application start when in debug mode.
+    mOperationsLogFile.open(kFileName, std::fstream::out | std::fstream::trunc);
+#endif
+
+#ifndef DEBUG
+    // In production mode logs must be appended.
+    mOperationsLogFile.open(kFileName, std::fstream::out | std::fstream::app);
+#endif
+
+}
 
 void Logger::logException(
     const string &subsystem,
@@ -109,10 +151,13 @@ const string Logger::formatMessage(
     }
 
     auto m = message;
+
+    // Cut the '\n' symbol in the edn of line (if present).
     if (m.at(m.size()-1) == '\n') {
         m = m.substr(0, m.size()-1);
     }
 
+    // Add "." to the end if last symbol is not a punctuation.
     if (m.at(m.size()-1) != '.' && m.at(m.size()-1) != '\n' && m.at(m.size()-1) != ':') {
         m += ".";
     }
@@ -124,7 +169,7 @@ const string Logger::recordPrefix(
     const string &group)
 {
     stringstream s;
-    s << boost::posix_time::microsec_clock::universal_time() << " : " << group << "\t";
+    s << LoggerStream::currentUTC() << " : " << group << "\t";
     return s.str();
 }
 
@@ -146,7 +191,7 @@ void Logger::logRecord(
     mOperationsLogFile.flush();
 
     mOperationsLogFileLinesNumber++;
-    if(mOperationsLogFileLinesNumber >= maxRotateLimit){
+    if(mOperationsLogFileLinesNumber >= kMaxLinesPerFile){
         rotate();
         mOperationsLogFileLinesNumber = 0;
     }
@@ -157,19 +202,23 @@ void Logger::rotate()
     mOperationsLogFile.close();
 
     stringstream rotateFileName;
-    rotateFileName << "archieved_operation_" << boost::posix_time::microsec_clock::universal_time() << ".log";
+    rotateFileName << kArchivedNamePrefix
+                   << LoggerStream::currentUTC()
+                   << ".log";
 
-    std::string tmp = rotateFileName.str();
-    formatLogFileName(tmp, " ", "_");
-    const char* newname = tmp.c_str();
-    rename("operations.log", newname);
+    auto archivedLogFileName = rotateFileName.str();
+    formatLogFileName(archivedLogFileName, " ", "_");
 
-    mOperationsLogFile.open("operations.log", std::fstream::out | std::fstream::trunc);
+    // Move original log file to the new one.
+    rename(kFileName, archivedLogFileName.c_str());
+
+    // New operations log file must be open in trunc mode to clear all previosly written records.
+    mOperationsLogFile.open(kFileName, std::fstream::out | std::fstream::trunc);
 }
 
-void Logger::calculateOperationsLogFileLinesNumber()
+void Logger::calculateCurrentLogFileLinesCount()
 {
-    ifstream kOperationLogFile(mOperationLogFileName);
+    ifstream kOperationLogFile(kFileName);
     std::string line;
     while (std::getline(kOperationLogFile , line)){
         ++mOperationsLogFileLinesNumber;

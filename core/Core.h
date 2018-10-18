@@ -10,17 +10,30 @@
 #ifndef GNS_OBSERVERS_CHAIN_BACK_CORE_H
 #define GNS_OBSERVERS_CHAIN_BACK_CORE_H
 
+
+#include "interface/commands/interface/CommandsInterface.h"
+#include "interface/results/interface/ResultsInterface.h"
+
 #include "logger/Logger.h"
 #include "logger/LoggerMixin.hpp"
-
-#include <memory>
+#include "common/memory/utils.hpp"
 
 
 class Core{
 public:
+    enum ErrorCodes {
+        LoggerInitialisationFailed = 1,
+        CommandsInterfaceInitialisationFailed,
+        ResultsInterfaceInitialisationFailed,
+
+        UnhandledException = 254,
+        Default = 255
+    };
+
+public:
     Core()
         noexcept
-        = default;
+    {};
 
     int run();
 
@@ -29,24 +42,52 @@ protected:
 
     int initLogger();
 
+    int initCommandsInterface();
+
 protected:
     static string logHeader()
         noexcept;
 
-    LoggerStream warning() const
+    /*
+     * Core implements its own log methods, and does not uses LoggerMixin,
+     * because core itself is created before the logger instance,
+     * and LoggerMixin instance can't be initialised properly.
+     */
+    LoggerStream warning()
+        const
         noexcept;
 
-    LoggerStream error() const
+    LoggerStream error()
+        const
         noexcept;
 
-    LoggerStream info() const
+    LoggerStream info()
+        const
         noexcept;
 
-    LoggerStream debug() const
+    LoggerStream debug()
+        const
+        noexcept;
+
+    /**
+     * warning(), error(), info(), and debug()
+     * are using the same logic for checking if logger was initialised.
+     * This method unifies this logic.
+     *
+     * @param group - WARNING / ERROR / etc
+     * @returns logger stream with "group" set.
+     */
+    LoggerStream constructLoggerStream(
+        const string &group)
+        const
         noexcept;
 
 protected:
+    as::io_service mIOService;
+
     unique_ptr<Logger> mLog;
+    unique_ptr<CommandsInterface> mCommandsInterface;
+    unique_ptr<ResultsInterface> mResultsInterface;
 };
 
 

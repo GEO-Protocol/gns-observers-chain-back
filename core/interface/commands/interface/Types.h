@@ -7,15 +7,10 @@
  * except according to the terms contained in the LICENSE.md file.
  */
 
-#ifndef GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
-#define GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
+#ifndef GNS_OBSERVERS_CHAIN_BACK_TYPES_H
+#define GNS_OBSERVERS_CHAIN_BACK_TYPES_H
 
-#include "Exception.h"
+static const constexpr char kCommandsSeparator = '\n';
+static const constexpr char kTokensSeparator = '\t';
 
-
-class IOError: public Exception {
-    using Exception::Exception;
-};
-
-
-#endif //GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
+#endif //GNS_OBSERVERS_CHAIN_BACK_TYPES_H

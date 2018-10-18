@@ -7,15 +7,23 @@
  * except according to the terms contained in the LICENSE.md file.
  */
 
-#ifndef GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
-#define GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
-
-#include "Exception.h"
+#ifndef GNS_OBSERVERS_CHAIN_BACK_TYPES_H
+#define GNS_OBSERVERS_CHAIN_BACK_TYPES_H
 
 
-class IOError: public Exception {
-    using Exception::Exception;
-};
+#include <memory>
+#include <cstdint>
 
 
-#endif //GNS_OBSERVERS_CHAIN_BACK_IOERROR_H
+using namespace std;
+
+
+/*
+ * Bytes
+ */
+typedef uint8_t byte;
+typedef std::shared_ptr<byte> BytesShared;
+typedef std::shared_ptr<const byte> ConstBytesShared;
+
+
+#endif //GNS_OBSERVERS_CHAIN_BACK_TYPES_H

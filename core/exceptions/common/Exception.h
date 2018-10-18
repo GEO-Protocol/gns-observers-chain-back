@@ -7,14 +7,15 @@
  * except according to the terms contained in the LICENSE.md file.
  */
 
-#ifndef GEO_NETWORK_CLIENT_EXCEPTIONS_H
-#define GEO_NETWORK_CLIENT_EXCEPTIONS_H
+#ifndef GNS_OBSERVERS_CHAIN_BACK_EXCEPTIONS_H
+#define GNS_OBSERVERS_CHAIN_BACK_EXCEPTIONS_H
 
 #include <string>
 
+
 using namespace std;
 
-// todo: add exception parameters info (source code line, subsystem, etc)
+// todo: add stacktrace (source code line, subsystem, etc)
 class Exception : public std::exception {
 public:
     virtual ~Exception() throw(){}
@@ -34,4 +35,4 @@ private:
 };
 
 
-#endif //GEO_NETWORK_CLIENT_EXCEPTIONS_H
+#endif //GNS_OBSERVERS_CHAIN_BACK_EXCEPTIONS_H
