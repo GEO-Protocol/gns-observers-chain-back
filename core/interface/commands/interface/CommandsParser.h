@@ -21,6 +21,11 @@ class CommandsParser:
     public LoggerMixin {
 
 public:
+    static const size_t kUUIDHexRepresentationSize = 36;
+    static const size_t kMinCommandSize = kUUIDHexRepresentationSize + 2;
+    static const size_t kAverageCommandIdentifierLength = 15;
+
+public:
     explicit CommandsParser(
         Logger &log);
 
@@ -30,7 +35,7 @@ public:
 
     pair<bool, BaseUserCommand::Shared> processReceivedCommands();
 
-private:
+protected:
     inline pair<bool, BaseUserCommand::Shared> tryDeserializeCommand();
 
     inline pair<bool, BaseUserCommand::Shared> tryParseCommand(
@@ -42,12 +47,8 @@ private:
 
     void cutBufferUpToNextCommand();
 
-public:
-    static const size_t kUUIDHexRepresentationSize = 36;
-    static const size_t kMinCommandSize = kUUIDHexRepresentationSize + 2;
-    static const size_t kAverageCommandIdentifierLength = 15;
+    const string& logHeader() const noexcept override;
 
-protected:
     template <typename CommandType, typename... Args>
     inline pair<bool, BaseUserCommand::Shared> newCommand(
         const CommandUUID &uuid,
@@ -61,11 +62,8 @@ protected:
                     buffer)));
     }
 
-    const string& logHeader() const noexcept override;
-
 private:
     string mBuffer;
 };
-
 
 #endif //GNS_OBSERVERS_CHAIN_BACK_COMMANDSPARSER_H

@@ -1,5 +1,5 @@
-#ifndef GEO_NETWORK_CLIENT_MEMORYERROR_H
-#define GEO_NETWORK_CLIENT_MEMORYERROR_H
+#ifndef GNS_OBSERVERS_CHAIN_BACK_MEMORYERROR_H
+#define GNS_OBSERVERS_CHAIN_BACK_MEMORYERROR_H
 
 #include "Exception.h"
 
@@ -8,4 +8,4 @@ class MemoryError: public Exception {
     using Exception::Exception;
 };
 
-#endif //GEO_NETWORK_CLIENT_MEMORYERROR_H
+#endif //GNS_OBSERVERS_CHAIN_BACK_MEMORYERROR_H

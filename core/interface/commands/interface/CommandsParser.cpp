@@ -184,6 +184,13 @@ void CommandsParser::cutBufferUpToNextCommand()
     mBuffer.shrink_to_fit();
 }
 
+const string& CommandsParser::logHeader() const
+    noexcept
+{
+    static string header = "[CommandsParser]";
+    return header;
+}
+
 pair<bool, BaseUserCommand::Shared> CommandsParser::commandIsInvalidOrIncomplete()
 {
     return make_pair(

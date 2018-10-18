@@ -12,9 +12,10 @@
 
 #include <string>
 
+
 using namespace std;
 
-// todo: add exception parameters info (source code line, subsystem, etc)
+// todo: add stacktrace (source code line, subsystem, etc)
 class Exception : public std::exception {
 public:
     virtual ~Exception() throw(){}

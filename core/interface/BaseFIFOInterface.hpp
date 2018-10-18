@@ -1,3 +1,12 @@
+/**
+ * This file is part of GEO Protocol.
+ * It is subject to the license terms in the LICENSE.md file found in the top-level directory
+ * of this distribution and at https://github.com/GEO-Protocol/GEO-network-client/blob/master/LICENSE.md
+ *
+ * No part of GEO Protocol, including this file, may be copied, modified, propagated, or distributed
+ * except according to the terms contained in the LICENSE.md file.
+ */
+
 #ifndef GNS_OBSERVERS_CHAIN_BACK_BASEUSERINTERFACE_H
 #define GNS_OBSERVERS_CHAIN_BACK_BASEUSERINTERFACE_H
 
@@ -40,7 +49,8 @@ public:
 
 protected:
     BaseFIFOInterface():
-        mFIFODescriptor(0){};
+        mFIFODescriptor(0)
+    {};
 
     /**
      * Must be reimplemented by the descendant classes.
@@ -51,7 +61,9 @@ protected:
     /**
      * @returns relative path to the FIFO file including the name of the FIFO file.
      */
-    const string FIFOFilePath() const{
+    const string FIFOFilePath()
+        const
+    {
         return string(kFIFODir) + string(FIFOName());
     }
 
@@ -59,7 +71,9 @@ protected:
      * @returns "true" if FIFO file with specified name and path is present.
      * Otherwise - returns "false".
      */
-    const bool isFIFOExists() const {
+    const bool isFIFOExists()
+        const
+    {
         return fs::exists(fs::path(FIFOFilePath()));
     }
 
@@ -70,7 +84,9 @@ protected:
      * @throws IOError in case if FIFO can't be created.
      * @throws ConflictError in case if FIFO is present already.
      */
-    void createFIFO(unsigned int permissionsMask=0755) {
+    void createFIFO(
+        const unsigned int permissionsMask=0755)
+    {
         if (! isFIFOExists()) {
             fs::create_directories(kFIFODir);
 

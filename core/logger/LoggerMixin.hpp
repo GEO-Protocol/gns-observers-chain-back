@@ -22,27 +22,32 @@ public:
     explicit LoggerMixin(
         Logger &logger)
         noexcept:
-        mLog(logger){}
+        mLog(logger)
+    {}
 
     virtual const string& logHeader() const noexcept = 0;
 
     LoggerStream info() const
-        noexcept {
+        noexcept
+    {
         return mLog.info(logHeader());
     }
 
     LoggerStream warning() const
-        noexcept {
+        noexcept
+    {
         return mLog.warning(logHeader());
     }
 
     LoggerStream error() const
-    noexcept {
+        noexcept
+    {
         return mLog.error(logHeader());
     }
 
     LoggerStream debug() const
-        noexcept {
+        noexcept
+    {
         return mLog.debug(logHeader());
     }
 
